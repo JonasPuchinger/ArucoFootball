@@ -1,0 +1,111 @@
+# Blender MTL File: 'None'
+# Material Count: 10
+
+newmtl 0
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.009961 0.009961 0.009961
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl BeardsMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Bump Player_Beard_gloss.png
+map_Kd Player_Beard_diffuse.png
+map_d Player_Beard_gloss.png
+
+newmtl BodyMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Body_gloss.png
+map_Kd Player_Body_diffuse.png
+
+newmtl BottomsMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Bottom_gloss.png
+map_Kd Player_Bottom_diffuse.png
+
+newmtl EyelashesMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Body_gloss.png
+map_Kd Player_Body_diffuse.png
+
+newmtl EyesMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Body_gloss.png
+map_Kd Player_Body_diffuse.png
+
+newmtl GlovesMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Glove_gloss.png
+map_Kd Player_Glove_diffuse.png
+
+newmtl HairMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Hair_gloss.png
+map_Kd Player_Hair_diffuse.png
+
+newmtl ShoesMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Shoes_gloss.png
+map_Kd Player_Shoes_diffuse.png
+
+newmtl TopsMat
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.010000 0.010000 0.010000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Player_Top_gloss.png
+map_Kd Player_Top_diffuse.png
