@@ -64,14 +64,10 @@ class OpenGLGlyphs:
 
     def initGUI(self):
         app = QApplication(sys.argv)
-        player_data = [("1", "player1", "devil.jpg"), ("2", "huso", "devil.jpg")]
+        player_data = [("1", "player1", "devil.jpg"), ("2", "player2", "devil.jpg")]
         self.mainWindow = MainWindow(player_data)
         self.mainWindow.show()
-        self.unset_player_widget = self.mainWindow.listWidgetA
         self.set_player_widget = self.mainWindow.listWidgetB
-
-        self.unset_player_widget.itemChanged.connect(self.setChangedListItems)
-        self.set_player_widget.itemChanged.connect(self.setChangedListItems)
 
         self.mainWindow.resize(800,800)
         app.exec_()
@@ -80,7 +76,8 @@ class OpenGLGlyphs:
         items = []
         for index in range(self.set_player_widget.count()):
             item = self.set_player_widget.item(index)
-            items.append(item)
+            if item:
+                items.append(item.data(Qt.UserRole))
         self.set_players = items
                 
     def _draw_scene(self):
@@ -133,6 +130,7 @@ class OpenGLGlyphs:
         glyphs = []
 
         player_count = 0
+        self.setChangedListItems()
         for i in range(len(ids)):
              
             rvecs, tvecs, glyph_name = rvec[i], tvec[i], ids[i][0]
