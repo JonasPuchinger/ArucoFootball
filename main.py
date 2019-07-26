@@ -10,6 +10,11 @@ from objloader import *
 from constants import *
 from aruco_detection import *
 import glob
+from drag import *
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+import threading
  
 class OpenGLGlyphs:
   
@@ -33,6 +38,9 @@ class OpenGLGlyphs:
 
         #init camera values
         self.calc_values()
+
+        # init player lists
+        self.set_players = []
  
     def _init_gl(self, Width, Height):
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -54,7 +62,27 @@ class OpenGLGlyphs:
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
 
- 
+    def initGUI(self):
+        app = QApplication(sys.argv)
+        player_data = [("1", "player1", "devil.jpg"), ("2", "huso", "devil.jpg")]
+        self.mainWindow = MainWindow(player_data)
+        self.mainWindow.show()
+        self.unset_player_widget = self.mainWindow.listWidgetA
+        self.set_player_widget = self.mainWindow.listWidgetB
+
+        self.unset_player_widget.itemChanged.connect(self.setChangedListItems)
+        self.set_player_widget.itemChanged.connect(self.setChangedListItems)
+
+        self.mainWindow.resize(800,800)
+        app.exec_()
+    
+    def setChangedListItems(self):
+        items = []
+        for index in range(self.set_player_widget.count()):
+            item = self.set_player_widget.item(index)
+            items.append(item)
+        self.set_players = items
+                
     def _draw_scene(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
@@ -97,20 +125,17 @@ class OpenGLGlyphs:
         corners, ids, _ = Tracker.preprocess(img)
         if np.all(ids != None):
             rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
-
+        else:
+            return
 
         ######################################
         # attempt to detect glyphs
         glyphs = []
- 
- 
-        if not ids: 
-            return
- 
 
+        player_count = 0
         for i in range(len(ids)):
              
-            rvecs, tvecs, glyph_name = rvec[i], tvec[i], ids[0][i]
+            rvecs, tvecs, glyph_name = rvec[i], tvec[i], ids[i][0]
             # build view matrix
           
             rmtx = cv2.Rodrigues(rvecs)[0]
@@ -128,9 +153,9 @@ class OpenGLGlyphs:
             glPushMatrix()
             glLoadMatrixd(view_matrix)
  
-            if glyph_name == 2:
+            if player_count < len(self.set_players):
                 glCallList(self.player.gl_list)
-           
+                player_count += 1
  
             glPopMatrix()
  
@@ -153,7 +178,12 @@ class OpenGLGlyphs:
         glutDisplayFunc(self._draw_scene)
         glutIdleFunc(self._draw_scene)
         self._init_gl(640, 480)
-        glutMainLoop()
+       # run opengl and camera in a thread
+        thread = threading.Thread( target = glutMainLoop ,args =())
+        thread.start()
+        # init GUI
+        # PyQt needs MainThread to run
+        self.initGUI()
   
 # run an instance of OpenGL Glyphs 
 openGLGlyphs = OpenGLGlyphs()
