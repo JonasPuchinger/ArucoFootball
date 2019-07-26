@@ -6,6 +6,7 @@ from PIL import Image
 import numpy as np
 from webcam import Webcam
 from objloader import *
+# from objloader_cache import *
 from constants import *
 from aruco_detection import *
 import glob
@@ -46,8 +47,8 @@ class OpenGLGlyphs:
          
         # assign shapes
         self.player = OBJ('football-player.obj')
-        self.cone = OBJ('cone.obj')
-        self.sphere = OBJ('sphere.obj')
+        # self.cone = OBJ('cone.obj')
+        # self.sphere = OBJ('sphere.obj')
  
         # assign texture
         glEnable(GL_TEXTURE_2D)

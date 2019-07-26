@@ -1,5 +1,7 @@
 import pygame
 from OpenGL.GL import *
+from os import path
+import importlib
 
 def MTL(filename):
     contents = {}
@@ -38,6 +40,19 @@ def MTL(filename):
 
 class OBJ:
     def __init__(self, filename, swapyz=False):
+        # l_f = "{}_loaded.py".format(filename.split(".")[0])
+        l_f = ""
+        if path.exists(l_f):
+            print("File found")
+            module_name = l_f.split(".")[0]
+            module = importlib.import_module(module_name)
+            self.gl_list = module.get_gl_list()
+            return
+        else:
+            print("Loading")
+            self.load(filename, swapyz)
+
+    def load(self, filename, swapyz=False):
         """Loads a Wavefront OBJ file. """
         self.vertices = []
         self.normals = []
