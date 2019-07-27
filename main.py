@@ -137,7 +137,7 @@ class OpenGLGlyphs:
         img = image
         corners, ids, _ = Tracker.preprocess(img)
         if np.all(ids != None):
-            rvec, tvec = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
+            rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
         else:
             return
 
@@ -169,7 +169,7 @@ class OpenGLGlyphs:
  
             if player_count < len(self.set_players):
                 glCallList(self.player1.gl_list)
-                #glCallList(self.player2.gl_list)
+                glCallList(self.player2.gl_list)
                 player_count += 1
  
             glPopMatrix()
