@@ -8,33 +8,51 @@ import sys, os
 
 # http://www.informit.com/articles/article.aspx?p=1187104&seqNum=3
 class CommandAdd(QUndoCommand):
-    def __init__(self, listWidget, row, string, description):
+    def __init__(self, listWidget, row, item, description):
         super(CommandAdd, self).__init__(description)
         self.listWidget = listWidget
         self.row = row
-        self.string = string
+        self.item = item
 
     def redo(self):
-        self.listWidget.insertItem(self.row, self.string)
+        self.listWidget.insertItem(self.row, self.item)
         self.listWidget.setCurrentRow(self.row)
 
     def undo(self):
         item = self.listWidget.takeItem(self.row)
         del item
 
+class CommandRemove(QUndoCommand):
+    def __init__(self, listWidget, item, row, description):
+        super(CommandDelete, self).__init__(description)
+        self.listWidget = listWidget
+        self.item = item
+        self.row = row
+
+    def redo(self):
+        item = self.listWidget.takeItem(self.row)
+        del item
+
+    def undo(self):
+        self.listWidget.insertItem(self.row, self.item)
+
 class ThumbListWidget(QListWidget):
 
-    playerAddedSignal = pyqtSignal(str, str)
+    playerAddedSignal = pyqtSignal(QListWidgetItem, str)
+    playerRemovedSignal = pyqtSignal(QListWidgetItem, str)
 
-    def __init__(self, type, parent=None):
+    def __init__(self, type, name, parent=None):
         super(ThumbListWidget, self).__init__(parent)
         self.setIconSize(QSize(124, 124))
         self.setDragDropMode(QAbstractItemView.DragDrop)
         self.setDefaultDropAction(Qt.MoveAction)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setAcceptDrops(True)
+        self.instance_name = name
         self.model().rowsInserted.connect(
             self.handleRowsInserted, Qt.QueuedConnection)
+        self.model().rowsRemoved.connect(
+            self.handleRowsRemoved, Qt.QueuedConnection)
 
     def handleRowsInserted(self, parent, first, last):
         for index in range(first, last + 1):
@@ -47,7 +65,12 @@ class ThumbListWidget(QListWidget):
                 widget.setIcon(icon)
                 item.setSizeHint(widget.sizeHint())
                 self.setItemWidget(item, widget)
-                self.playerAddedSignal.emit(name, str(parent))
+                self.playerAddedSignal.emit(item, self.instance_name)
+    
+    def handleRowsRemoved(self, parent, first, last):
+        for index in range(first, last + 1):
+            item = self.item(index)
+            self.playerRemovedSignal.emit(item, self.instance_name)
 
 class MainWindow(QMainWindow):
     def __init__(self, player_data):
@@ -62,8 +85,9 @@ class MainWindow(QMainWindow):
         myQWidget.setLayout(myBoxLayout)
         self.setCentralWidget(myQWidget)
 
-        self.listWidgetA = ThumbListWidget(self)
+        self.listWidgetA = ThumbListWidget(self, "listA")
         self.listWidgetA.playerAddedSignal.connect(self.playerAdded)
+        self.listWidgetA.playerRemovedSignal.connect(self.playerRemoved)
 
         for data in player_data:
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
@@ -71,19 +95,36 @@ class MainWindow(QMainWindow):
             myQListWidgetItem.setData(Qt.UserRole, data)
             self.listWidgetA.addItem(myQListWidgetItem)
 
-        self.listWidgetB = ThumbListWidget(self)
+        self.listWidgetB = ThumbListWidget(self, "listB")
         self.listWidgetB.playerAddedSignal.connect(self.playerAdded)
+        self.listWidgetB.playerRemovedSignal.connect(self.playerRemoved)
 
         myBoxLayout.addWidget(self.listWidgetB)
         myBoxLayout.addWidget(self.listWidgetA)
 
-    def playerAdded(self, name, parent):
-        print("{} added in {}".format(name, parent))
-        # self.undoStack.push()
+    def playerAdded(self, item, parent):
+        print("{} added in {}".format(item.data(Qt.UserRole)[1], parent))
+        command = None
+        if parent == "listA":
+            command = CommandAdd(self.listWidgetA, self.listWidgetA.currentRow(), item, "Add {}".format(item.data(Qt.UserRole)[1]))
+        if parent == "listB":
+            command = CommandAdd(self.listWidgetB, self.listWidgetB.currentRow(), item, "Add {}".format(item.data(Qt.UserRole)[1]))
+        self.undoStack.push(command)
+
+    def playerRemoved(self, item, parent):
+        print("{} removed from {}".format(item.data(Qt.UserRole)[1], parent))
+        command = None
+        if parent == "listA":
+            command = CommandRemove(self.listWidgetA, self.listWidgetA.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
+        if parent == "listB":
+            command = CommandRemove(self.listWidgetB, self.listWidgetB.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
+        self.undoStack.push(command)
+
+    # TODO: swap player
 
 
 class QCustomQWidget(QWidget):
-    def __init__ (self, parent = None):
+    def __init__(self, parent=None):
         super(QCustomQWidget, self).__init__(parent)
         self.textQVBoxLayout = QVBoxLayout()
         self.textUpQLabel    = QLabel()
@@ -104,13 +145,13 @@ class QCustomQWidget(QWidget):
             color: rgb(255, 0, 0);
         ''')
 
-    def setTextUp (self, text):
+    def setTextUp(self, text):
         self.textUpQLabel.setText(text)
 
-    def setTextDown (self, text):
+    def setTextDown(self, text):
         self.textDownQLabel.setText(text)
 
-    def setIcon (self, imagePath):
+    def setIcon(self, imagePath):
         pixmap = QPixmap(imagePath)
         pixmap = pixmap.scaledToHeight(50)
         self.iconQLabel.setPixmap(pixmap)
