@@ -54,9 +54,9 @@ class OpenGLGlyphs:
         glMatrixMode(GL_MODELVIEW)
          
         # assign shapes
-        self.player = OBJ('football-player.obj')
+        #self.player = OBJ('football-player.obj')
         self.player1 = OBJ('football-player1.obj')
-        self.player2 = OBJ('football-player2.obj')
+        #self.player2 = OBJ('football-player2.obj')
         #self.player3 = OBJ('football-player3.obj')
         #self.player4 = OBJ('football-player4.obj')
         #self.player5 = OBJ('football-player5.obj')
@@ -170,6 +170,7 @@ class OpenGLGlyphs:
             if player_count < len(self.set_players):
                 glCallList(self.player1.gl_list)
                 #glCallList(self.player2.gl_list)
+                #glCallList(self.player3.gl_list)
                 player_count += 1
  
             glPopMatrix()
