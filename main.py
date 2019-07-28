@@ -14,6 +14,7 @@ from drag import *
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from player import Player
 import threading
  
 class OpenGLGlyphs:
@@ -40,7 +41,9 @@ class OpenGLGlyphs:
         self.calc_values()
 
         # init player lists
+        self.set_ids = []
         self.set_players = []
+        self.players = []
  
     def _init_gl(self, Width, Height):
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -56,7 +59,7 @@ class OpenGLGlyphs:
         # assign shapes
         #self.player = OBJ('football-player.obj')
         self.player1 = OBJ('football-player1.obj')
-        #self.player2 = OBJ('football-player2.obj')
+        self.player2 = OBJ('football-player2.obj')
         #self.player3 = OBJ('football-player3.obj')
         #self.player4 = OBJ('football-player4.obj')
         #self.player5 = OBJ('football-player5.obj')
@@ -74,26 +77,45 @@ class OpenGLGlyphs:
         # self.cone = OBJ('cone.obj')
         # self.sphere = OBJ('sphere.obj')
  
+        #add Players to list
+        self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
+        self.players.append(Player("Cristiano Ronaldo", "7", "devil.jpg", self.player2))
         # assign texture
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
 
     def initGUI(self):
         app = QApplication(sys.argv)
-        player_data = [("1", "player1", "devil.jpg"), ("2", "player2", "devil.jpg")]
-        self.mainWindow = MainWindow(player_data)
+        self.mainWindow = MainWindow(self.players)
         self.mainWindow.show()
         self.set_player_widget = self.mainWindow.listWidgetB
+        self.unset_player_widget = self.mainWindow.listWidgetA
+        self.unset_player_widget.itemChanged.connect(self.removeID)
 
         self.mainWindow.resize(800,800)
         app.exec_()
     
+    def removeID(self):
+        for index in range(self.unset_player_widget.count()):
+            item = self.unset_player_widget.item(index)
+            if item:
+                data = item.data(Qt.UserRole)
+                if data:
+                    for player in self.players:
+                        if player.number == data[0] and player.marker_num != None:
+                            self.set_ids.remove(player.marker_num)
+                            player.marker_num = None
+
     def setChangedListItems(self):
         items = []
         for index in range(self.set_player_widget.count()):
             item = self.set_player_widget.item(index)
             if item:
-                items.append(item.data(Qt.UserRole))
+                data = item.data(Qt.UserRole)
+                for player in self.players:
+                    if player.number == data[0]:
+                        items.append(player)
+                    
         self.set_players = items
                 
     def _draw_scene(self):
@@ -167,12 +189,17 @@ class OpenGLGlyphs:
             glPushMatrix()
             glLoadMatrixd(view_matrix)
  
-            if player_count < len(self.set_players):
-                glCallList(self.player1.gl_list)
-                #glCallList(self.player2.gl_list)
-                #glCallList(self.player3.gl_list)
-                player_count += 1
- 
+            if ids[i] not in self.set_ids:
+                for player in self.set_players:
+                    if player.marker_num is None:
+                        player.marker_num = ids[i]
+                        self.set_ids.append(ids[i])
+                        break
+
+            for player in self.set_players:
+                if player.marker_num == ids[i]:
+                    glCallList(player.model.gl_list)
+
             glPopMatrix()
  
     def _draw_background(self):
