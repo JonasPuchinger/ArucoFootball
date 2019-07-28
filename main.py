@@ -56,6 +56,11 @@ class OpenGLGlyphs:
         # assign shapes
         #self.player = OBJ('football-player.obj')
         self.player1 = OBJ('football-player1.obj')
+        self.player2 = self.player1
+        #print(self.player2.mtl.__getitem__('TopsMat')['map_Kd'])
+        self.player2.mtl.__getitem__('TopsMat')['map_Kd'] = IMAGE_TOP_PLAYER_2
+        print(self.player2.mtl.__getitem__('TopsMat')['map_Kd'])
+        print('test')
         #self.player2 = OBJ('football-player2.obj')
         #self.player3 = OBJ('football-player3.obj')
         #self.player4 = OBJ('football-player4.obj')
@@ -168,8 +173,8 @@ class OpenGLGlyphs:
             glLoadMatrixd(view_matrix)
  
             if player_count < len(self.set_players):
-                glCallList(self.player1.gl_list)
-                #glCallList(self.player2.gl_list)
+                #glCallList(self.player1.gl_list)
+                glCallList(self.player2.gl_list)
                 #glCallList(self.player3.gl_list)
                 player_count += 1
  
