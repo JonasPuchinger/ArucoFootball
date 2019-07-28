@@ -55,7 +55,9 @@ class OpenGLGlyphs:
          
         # assign shapes
         #self.player = OBJ('football-player.obj')
-        self.player1 = OBJ('football-player1.obj')
+        self.player1 = OBJ('football-player1.obj', 1)
+        self.player2 = OBJ('football-player1.obj', 2)
+        self.player3 = OBJ('football-player1.obj', 3)
         #self.player2 = OBJ('football-player2.obj')
         #self.player3 = OBJ('football-player3.obj')
         #self.player4 = OBJ('football-player4.obj')
@@ -137,7 +139,7 @@ class OpenGLGlyphs:
         img = image
         corners, ids, _ = Tracker.preprocess(img)
         if np.all(ids != None):
-            rvec, tvec = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
+            rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
         else:
             return
 
@@ -168,7 +170,10 @@ class OpenGLGlyphs:
             glLoadMatrixd(view_matrix)
  
             if player_count < len(self.set_players):
-                glCallList(self.player1.gl_list)
+                if glyph_name == 1:
+                    glCallList(self.player1.gl_list)
+                if glyph_name == 2:
+                    glCallList(self.player2.gl_list)
                 #glCallList(self.player2.gl_list)
                 #glCallList(self.player3.gl_list)
                 player_count += 1

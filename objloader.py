@@ -39,7 +39,7 @@ def MTL(filename):
     return contents
 
 class OBJ:
-    def __init__(self, filename, swapyz=False):
+    def __init__(self, filename, mtl_index, swapyz=False):
         # l_f = "{}_loaded.py".format(filename.split(".")[0])
         l_f = ""
         if path.exists(l_f):
@@ -50,9 +50,9 @@ class OBJ:
             return
         else:
             print("Loading")
-            self.load(filename, swapyz)
+            self.load(filename, mtl_index, swapyz)
 
-    def load(self, filename, swapyz=False):
+    def load(self, filename, mtl_index, swapyz=False):
         """Loads a Wavefront OBJ file. """
         self.vertices = []
         self.normals = []
@@ -79,7 +79,8 @@ class OBJ:
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
-                self.mtl = MTL(values[1])
+                if int(values[1]) == mtl_index:
+                    self.mtl = MTL(values[2])
             elif values[0] == 'f':
                 face = []
                 texcoords = []
