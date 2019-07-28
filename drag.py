@@ -77,12 +77,14 @@ class QCustomQWidget (QWidget):
         ''')
 
     def setTextUp (self, text):
+        text = "Number: \n" + text
         self.textUpQLabel.setText(text)
 
     def setTextDown (self, text):
+        text = "Name: \n" +text
         self.textDownQLabel.setText(text)
 
     def setIcon (self, imagePath):
         pixmap = QPixmap(imagePath)
-        pixmap = pixmap.scaledToHeight(50)
+        pixmap = pixmap.scaledToHeight(80)
         self.iconQLabel.setPixmap(pixmap)
