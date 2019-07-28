@@ -57,22 +57,11 @@ class OpenGLGlyphs:
         #self.player = OBJ('football-player.obj')
         self.player1 = OBJ('football-player1.obj', 1)
         self.player2 = OBJ('football-player1.obj', 2)
-        self.player3 = OBJ('football-player1.obj', 3)
-        #self.player2 = OBJ('football-player2.obj')
-        #self.player3 = OBJ('football-player3.obj')
-        #self.player4 = OBJ('football-player4.obj')
-        #self.player5 = OBJ('football-player5.obj')
-        #self.player6 = OBJ('football-player6.obj')
-        #self.player7 = OBJ('football-player7.obj')
-        #self.player8 = OBJ('football-player8.obj')
-        #self.player9 = OBJ('football-player9.obj')
-        #self.player10 = OBJ('football-player10.obj')
-        #self.player11 = OBJ('football-player11.obj')
-        #self.player12 = OBJ('football-player12.obj')
-        #self.player13 = OBJ('football-player13.obj')
-        #self.player14 = OBJ('football-player14.obj')
-        #self.player15 = OBJ('football-player15.obj')
-        #self.player16 = OBJ('football-player16.obj')
+        #self.player3 = OBJ('football-player1.obj', 3)
+        #self.player4 = OBJ('football-player1.obj', 4)
+        #self.player5 = OBJ('football-player1.obj', 5)
+        #self.player6 = OBJ('football-player1.obj', 6)
+        #self.player7 = OBJ('football-player1.obj', 7)
         # self.cone = OBJ('cone.obj')
         # self.sphere = OBJ('sphere.obj')
  
@@ -139,7 +128,7 @@ class OpenGLGlyphs:
         img = image
         corners, ids, _ = Tracker.preprocess(img)
         if np.all(ids != None):
-            rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
+            rvec, tvec = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
         else:
             return
 
@@ -174,7 +163,6 @@ class OpenGLGlyphs:
                     glCallList(self.player1.gl_list)
                 if glyph_name == 2:
                     glCallList(self.player2.gl_list)
-                #glCallList(self.player2.gl_list)
                 #glCallList(self.player3.gl_list)
                 player_count += 1
  

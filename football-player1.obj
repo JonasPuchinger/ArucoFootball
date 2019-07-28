@@ -3,6 +3,10 @@
 mtllib 1 football-player1.mtl
 mtllib 2 football-player2.mtl
 mtllib 3 football-player3.mtl
+mtllib 4 football-player4.mtl
+mtllib 5 football-player5.mtl
+mtllib 6 football-player6.mtl
+mtllib 7 football-player7.mtl
 o Hair
 v -0.051085 -0.052521 1.753518
 v -0.055328 -0.058180 1.742165
