@@ -71,6 +71,7 @@ class OpenGLGlyphs:
         #add Players to list
         self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
         self.players.append(Player("Cristiano Ronaldo", "7", "devil.jpg", self.player2))
+        
         # assign texture
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
@@ -82,7 +83,7 @@ class OpenGLGlyphs:
         self.set_player_widget = self.mainWindow.listWidgetB
         self.unset_player_widget = self.mainWindow.listWidgetA
         self.unset_player_widget.itemChanged.connect(self.removeID)
-
+        
         self.mainWindow.resize(800,800)
         app.exec_()
 
