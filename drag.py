@@ -35,7 +35,6 @@ class MainWindow(QMainWindow):
     def __init__(self, player_data):
         super(QMainWindow,self).__init__()
         self.listItems = {}
-        print(player_data)
         myQWidget = QWidget()
         myBoxLayout = QHBoxLayout()
         myQWidget.setLayout(myBoxLayout)
