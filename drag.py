@@ -8,37 +8,39 @@ import sys, os
 
 # http://www.informit.com/articles/article.aspx?p=1187104&seqNum=3
 class CommandAdd(QUndoCommand):
-    def __init__(self, listWidget, row, item, description):
+    def __init__(self, listWidget, row, item, itemWidget, description):
         super(CommandAdd, self).__init__(description)
         self.listWidget = listWidget
         self.row = row
         self.item = item
+        self.itemWidget = itemWidget
 
     def redo(self):
-        self.listWidget.insertItem(self.row, self.item)
-        self.listWidget.setCurrentRow(self.row)
+        self.listWidget.setItemWidget(self.item, self.itemWidget)
+        # self.listWidget.insertItem(self.row, self.item)
+        # self.listWidget.setCurrentRow(self.row)
 
     def undo(self):
-        item = self.listWidget.takeItem(self.row)
-        del item
+        pass
+        # item = self.listWidget.takeItem(self.row)
+        # del item
 
-class CommandRemove(QUndoCommand):
-    def __init__(self, listWidget, item, row, description):
-        super(CommandDelete, self).__init__(description)
-        self.listWidget = listWidget
-        self.item = item
-        self.row = row
+# class CommandRemove(QUndoCommand):
+#     def __init__(self, listWidget, row, item, description):
+#         super(CommandRemove, self).__init__(description)
+#         self.listWidget = listWidget
+#         self.item = item
+#         self.row = row
 
-    def redo(self):
-        item = self.listWidget.takeItem(self.row)
-        del item
+#     def redo(self):
+#         pass
 
-    def undo(self):
-        self.listWidget.insertItem(self.row, self.item)
+#     def undo(self):
+#         pass
 
 class ThumbListWidget(QListWidget):
 
-    playerAddedSignal = pyqtSignal(QListWidgetItem, str)
+    playerAddedSignal = pyqtSignal(QListWidgetItem, QWidget, str)
     playerRemovedSignal = pyqtSignal(QListWidgetItem, str)
 
     def __init__(self, type, name, parent=None):
@@ -51,8 +53,8 @@ class ThumbListWidget(QListWidget):
         self.instance_name = name
         self.model().rowsInserted.connect(
             self.handleRowsInserted, Qt.QueuedConnection)
-        self.model().rowsRemoved.connect(
-            self.handleRowsRemoved, Qt.QueuedConnection)
+        # self.model().rowsRemoved.connect(
+        #     self.handleRowsRemoved, Qt.QueuedConnection)
 
     def handleRowsInserted(self, parent, first, last):
         for index in range(first, last + 1):
@@ -64,19 +66,20 @@ class ThumbListWidget(QListWidget):
                 widget.setTextDown(name)
                 widget.setIcon(icon)
                 item.setSizeHint(widget.sizeHint())
-                self.setItemWidget(item, widget)
-                self.playerAddedSignal.emit(item, self.instance_name)
+                self.playerAddedSignal.emit(item, widget, self.instance_name)
     
-    def handleRowsRemoved(self, parent, first, last):
-        for index in range(first, last + 1):
-            item = self.item(index)
-            self.playerRemovedSignal.emit(item, self.instance_name)
+    # def handleRowsRemoved(self, parent, first, last):
+    #     for index in range(first, last + 1):
+    #         item = self.item(index)
+    #         if item is not None:
+    #             self.playerRemovedSignal.emit(item, self.instance_name)
 
 class MainWindow(QMainWindow):
     def __init__(self, player_data):
         super(QMainWindow,self).__init__()
 
         self.undoStack = QUndoStack()
+        # self.createActions()
 
         self.listItems = {}
 
@@ -87,7 +90,7 @@ class MainWindow(QMainWindow):
 
         self.listWidgetA = ThumbListWidget(self, "listA")
         self.listWidgetA.playerAddedSignal.connect(self.playerAdded)
-        self.listWidgetA.playerRemovedSignal.connect(self.playerRemoved)
+        # self.listWidgetA.playerRemovedSignal.connect(self.playerRemoved)
 
         for data in player_data:
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
@@ -97,28 +100,41 @@ class MainWindow(QMainWindow):
 
         self.listWidgetB = ThumbListWidget(self, "listB")
         self.listWidgetB.playerAddedSignal.connect(self.playerAdded)
-        self.listWidgetB.playerRemovedSignal.connect(self.playerRemoved)
+        # self.listWidgetB.playerRemovedSignal.connect(self.playerRemoved)
 
         myBoxLayout.addWidget(self.listWidgetB)
         myBoxLayout.addWidget(self.listWidgetA)
 
-    def playerAdded(self, item, parent):
-        print("{} added in {}".format(item.data(Qt.UserRole)[1], parent))
+    # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-undoframework.html
+    def createActions(self):
+        self.undoAction = QAction("&Undo", self)
+        self.undoAction.setShortcut("Ctrl+Z")
+        self.undoAction.triggered.connect(self.undoStack.undo)
+        
+        self.redoAction = QAction("&Redo", self)
+        self.redoAction.setShortcut("Ctrl+Y")
+        self.redoAction.triggered.connect(self.undoStack.redo)
+
+    def playerAdded(self, item, widget, parent):
         command = None
         if parent == "listA":
-            command = CommandAdd(self.listWidgetA, self.listWidgetA.currentRow(), item, "Add {}".format(item.data(Qt.UserRole)[1]))
+            print("{} added in {}".format(item.data(Qt.UserRole)[1], parent))
+            print("{} removed from listB".format(item.data(Qt.UserRole)[1], parent))
+            command = CommandAdd(self.listWidgetA, self.listWidgetA.currentRow(), item, widget, "Add {}".format(item.data(Qt.UserRole)[1]))
         if parent == "listB":
-            command = CommandAdd(self.listWidgetB, self.listWidgetB.currentRow(), item, "Add {}".format(item.data(Qt.UserRole)[1]))
+            print("{} added in {}".format(item.data(Qt.UserRole)[1], parent))
+            print("{} removed from listA".format(item.data(Qt.UserRole)[1], parent))
+            command = CommandAdd(self.listWidgetB, self.listWidgetB.currentRow(), item, widget, "Add {}".format(item.data(Qt.UserRole)[1]))
         self.undoStack.push(command)
 
-    def playerRemoved(self, item, parent):
-        print("{} removed from {}".format(item.data(Qt.UserRole)[1], parent))
-        command = None
-        if parent == "listA":
-            command = CommandRemove(self.listWidgetA, self.listWidgetA.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
-        if parent == "listB":
-            command = CommandRemove(self.listWidgetB, self.listWidgetB.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
-        self.undoStack.push(command)
+    # def playerRemoved(self, item, parent):
+    #     print("{} removed from {}".format(item.data(Qt.UserRole)[1], parent))
+    #     command = None
+    #     if parent == "listA":
+    #         command = CommandRemove(self.listWidgetA, self.listWidgetA.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
+    #     if parent == "listB":
+    #         command = CommandRemove(self.listWidgetB, self.listWidgetB.currentRow(), item, "Remove {}".format(item.data(Qt.UserRole)[1]))
+    #     self.undoStack.push(command)
 
     # TODO: swap player
 
