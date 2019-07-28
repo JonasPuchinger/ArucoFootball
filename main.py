@@ -14,6 +14,7 @@ from drag import *
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from player import Player
 import threading
  
 class OpenGLGlyphs:
@@ -41,6 +42,7 @@ class OpenGLGlyphs:
 
         # init player lists
         self.set_players = []
+        self.players = []
  
     def _init_gl(self, Width, Height):
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -74,14 +76,15 @@ class OpenGLGlyphs:
         # self.cone = OBJ('cone.obj')
         # self.sphere = OBJ('sphere.obj')
  
+        #add Players to list
+        self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
         # assign texture
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
 
     def initGUI(self):
         app = QApplication(sys.argv)
-        player_data = [("1", "player1", "devil.jpg"), ("2", "player2", "devil.jpg")]
-        self.mainWindow = MainWindow(player_data)
+        self.mainWindow = MainWindow(self.players)
         self.mainWindow.show()
         self.set_player_widget = self.mainWindow.listWidgetB
 
@@ -93,7 +96,11 @@ class OpenGLGlyphs:
         for index in range(self.set_player_widget.count()):
             item = self.set_player_widget.item(index)
             if item:
-                items.append(item.data(Qt.UserRole))
+                data =  item.data(Qt.UserRole)
+                for player in self.players:
+                    if player.number == data[0]:
+                        items.append(player)
+                    
         self.set_players = items
                 
     def _draw_scene(self):
@@ -168,6 +175,7 @@ class OpenGLGlyphs:
             glLoadMatrixd(view_matrix)
  
             if player_count < len(self.set_players):
+                print(self.set_players)
                 glCallList(self.player1.gl_list)
                 #glCallList(self.player2.gl_list)
                 #glCallList(self.player3.gl_list)

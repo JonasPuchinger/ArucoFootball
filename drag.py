@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
     def __init__(self, player_data):
         super(QMainWindow,self).__init__()
         self.listItems = {}
-
+        print(player_data)
         myQWidget = QWidget()
         myBoxLayout = QHBoxLayout()
         myQWidget.setLayout(myBoxLayout)
@@ -43,10 +43,11 @@ class MainWindow(QMainWindow):
 
         self.listWidgetA = ThumbListWidget(self)
 
-        for data in player_data:
+        for player in player_data:
+            player = (player.number, player.name, player.pic_path)
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
-            # store the data needed to create/re-create the custom widget
-            myQListWidgetItem.setData(Qt.UserRole, data)
+            # store the player needed to create/re-create the custom widget
+            myQListWidgetItem.setData(Qt.UserRole, player)
             self.listWidgetA.addItem(myQListWidgetItem)
 
         self.listWidgetB = ThumbListWidget(self)
