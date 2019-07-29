@@ -19,6 +19,7 @@ import threading
 import wiimote
 from ProjectiveTransformation import ProjectiveTransformation as pt
 import time
+import pyautogui
 
 class OpenGLGlyphs:
 
@@ -82,9 +83,17 @@ class OpenGLGlyphs:
 
     def gameModel(self):
         drawing_points = []
+        button_pressed = False
         while True:
             QtGui.QGuiApplication.processEvents()
             if self.wm.buttons["A"]:
+                if not button_pressed:
+                    pyautogui.mouseDown(button='right')
+                    button_pressed = not button_pressed
+                else:
+                    pyautogui.mouseUp(button='right')
+                    button_pressed = not button_pressed
+
                 print("A pushed...")
                 #TODO start drag and drop
             state = self.wm.ir.get_state()
@@ -95,12 +104,11 @@ class OpenGLGlyphs:
                 point = (point[0], 800-point[1])
 
                 # check if calculated point is range of DrawableObject
-                if not (point[0] > 800 or point[0] < 0 or point[1] > 800 or point[1] < 0):
-                    print("Fakepos: ", point)
-                    self.cursor.setPos(self.mainWindow.mapFromGlobal(QPoint(int(point[0]), int(point[1]))))
-                    self.cursor.setShape(Qt.OpenHandCursor)
-                    self.mainWindow.setCursor(self.cursor)
-                    print("Real pos", QCursor.pos())
+                
+                point = QPoint(int(point[0]), int(point[1]))
+                self.cursor.setPos(self.mainWindow.mapFromGlobal(point))
+                self.cursor.setShape(Qt.OpenHandCursor)
+                self.mainWindow.setCursor(self.cursor)
             else:
                 drawing_points = []
 
@@ -145,7 +153,7 @@ class OpenGLGlyphs:
         self.set_player_widget = self.mainWindow.listWidgetB
         self.unset_player_widget = self.mainWindow.listWidgetA
         self.unset_player_widget.itemChanged.connect(self.removeID)
-        
+        self.mainWindow.setFocus()
         self.mainWindow.resize(800,800)
         self.cursor = QCursor()
        
