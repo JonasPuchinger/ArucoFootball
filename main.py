@@ -93,9 +93,8 @@ class OpenGLGlyphs:
                 else:
                     pyautogui.mouseUp(button='right')
                     button_pressed = not button_pressed
-
-                print("A pushed...")
-                #TODO start drag and drop
+            if self.wm.buttons["B"]:
+                self.mainWindow.undoMethod(True)
             state = self.wm.ir.get_state()
             if len(state) == 4:
 
@@ -282,7 +281,7 @@ class OpenGLGlyphs:
         # setup and run OpenGL
         glutInit()
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(640, 480)
+        glutInitWindowSize(1960, 1024)
         glutInitWindowPosition(800, 400)
         self.window_id = glutCreateWindow("OpenGL Glyphs")
         glutDisplayFunc(self._draw_scene)
