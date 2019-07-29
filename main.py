@@ -16,6 +16,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from player import Player
 import threading
+import wiimote
+from ProjectiveTransformation import ProjectiveTransformation as pt
+import time
+import pyautogui
 
 class OpenGLGlyphs:
 
@@ -25,7 +29,7 @@ class OpenGLGlyphs:
                                [-1.0,-1.0,-1.0,-1.0],
                                [ 1.0, 1.0, 1.0, 1.0]])
 
-    def __init__(self):
+    def __init__(self, btAddr):
         # initialise webcam and start thread
         self.webcam = Webcam()
         self.webcam.start()
@@ -44,6 +48,71 @@ class OpenGLGlyphs:
         self.set_ids = []
         self.set_players = []
         self.players = []
+
+        # connect wiimote
+        self.connectingWiimote(btAddr)
+        self.transformation = pt()
+        
+    def connectingWiimote(self, btAddr):
+        addr = btAddr
+        name = None
+        self.wm = wiimote.connect(addr, name)
+
+    def getScoords(self, state):
+        # bubblesort from: https://www.geeksforgeeks.org/python-program-for-bubble-sort/
+        n = len(state)
+        for i in range(n):
+            for j in range(0, n-i-1):
+                if state[j]['x'] > state[j+1]['x']:
+                    state[j], state[j+1] = state[j+1], state[j]
+
+        # start points from top left corner counter-clockwise
+        if state[0]['y'] < state[1]['y']:
+            state[0], state[1] = state[1], state[0]
+
+        if state[2]['y'] > state[3]['y']:
+            state[2], state[3] = state[3], state[2]
+
+        A = (state[0]['x'], state[0]['y'])
+        B = (state[1]['x'], state[1]['y'])
+        C = (state[2]['x'], state[2]['y'])
+        D = (state[3]['x'], state[3]['y'])
+        
+        scoords = [A, B, C, D]
+        return scoords
+
+    def gameModel(self):
+        drawing_points = []
+        button_pressed = False
+        while True:
+            QtGui.QGuiApplication.processEvents()
+            if self.wm.buttons["A"]:
+                if not button_pressed:
+                    pyautogui.mouseDown(button='right')
+                    button_pressed = not button_pressed
+                else:
+                    pyautogui.mouseUp(button='right')
+                    button_pressed = not button_pressed
+            if self.wm.buttons["B"]:
+                self.mainWindow.undoMethod(True)
+            state = self.wm.ir.get_state()
+            if len(state) == 4:
+
+                scoords = self.getScoords(state)
+                point = self.transformation.getActualCoordinates(scoords)
+                point = (point[0], 800-point[1])
+
+                # check if calculated point is range of DrawableObject
+                
+                point = QPoint(int(point[0]), int(point[1]))
+                self.cursor.setPos(self.mainWindow.mapFromGlobal(point))
+                self.cursor.setShape(Qt.OpenHandCursor)
+                self.mainWindow.setCursor(self.cursor)
+            else:
+                drawing_points = []
+
+            time.sleep(0.1)
+
 
     def _init_gl(self, Width, Height):
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -71,6 +140,7 @@ class OpenGLGlyphs:
         #add Players to list
         self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
         self.players.append(Player("Cristiano Ronaldo", "7", "devil.jpg", self.player2))
+        
         # assign texture
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
@@ -82,8 +152,13 @@ class OpenGLGlyphs:
         self.set_player_widget = self.mainWindow.listWidgetB
         self.unset_player_widget = self.mainWindow.listWidgetA
         self.unset_player_widget.itemChanged.connect(self.removeID)
-
+        self.mainWindow.setFocus()
         self.mainWindow.resize(800,800)
+        self.cursor = QCursor()
+       
+        thread = threading.Thread( target = self.gameModel ,args =())
+        thread.start()
+
         app.exec_()
 
     def removeID(self):
@@ -206,7 +281,7 @@ class OpenGLGlyphs:
         # setup and run OpenGL
         glutInit()
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(640, 480)
+        glutInitWindowSize(1960, 1024)
         glutInitWindowPosition(800, 400)
         self.window_id = glutCreateWindow("OpenGL Glyphs")
         glutDisplayFunc(self._draw_scene)
@@ -220,5 +295,6 @@ class OpenGLGlyphs:
         self.initGUI()
 
 # run an instance of OpenGL Glyphs
-openGLGlyphs = OpenGLGlyphs()
+
+openGLGlyphs = OpenGLGlyphs(sys.argv[1])
 openGLGlyphs.main()
