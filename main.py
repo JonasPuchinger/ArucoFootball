@@ -153,7 +153,8 @@ class OpenGLGlyphs:
         self.unset_player_widget = self.mainWindow.listWidgetA
         self.unset_player_widget.itemChanged.connect(self.removeID)
         self.mainWindow.setFocus()
-        self.mainWindow.resize(800,800)
+        self.mainWindow.setWindowTitle("Tactic-Window")
+        self.mainWindow.resize(600,800)
         self.cursor = QCursor()
        
         #thread = threading.Thread( target = self.gameModel ,args =())
@@ -281,9 +282,9 @@ class OpenGLGlyphs:
         # setup and run OpenGL
         glutInit()
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(1960, 1024)
+        glutInitWindowSize(1280, 960)
         glutInitWindowPosition(800, 400)
-        self.window_id = glutCreateWindow("OpenGL Glyphs")
+        self.window_id = glutCreateWindow("Footballfield")
         glutDisplayFunc(self._draw_scene)
         glutIdleFunc(self._draw_scene)
         self._init_gl(640, 480)

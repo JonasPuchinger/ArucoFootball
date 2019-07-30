@@ -158,7 +158,6 @@ class MainWindow(QMainWindow):
                         data = item.data(Qt.UserRole)
                         saveWidget.append(data)
                 widgets += (saveWidget, )
-            print("Added..")
             self.undo_items.append(widgets)
         
 
