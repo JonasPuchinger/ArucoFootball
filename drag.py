@@ -52,8 +52,10 @@ class MainWindow(QMainWindow):
 
         benchLabel = QLabel()
         benchLabel.setText("Bench: ")
+        benchLabel.setStyleSheet("font: 30pt Times New Roman")
         fieldLabel = QLabel()
         fieldLabel.setText("Field: ")
+        fieldLabel.setStyleSheet("font: 30pt Times New Roman")
         labelLayout = QHBoxLayout()
         labelLayout.addWidget(fieldLabel)
         labelLayout.addWidget(benchLabel)
