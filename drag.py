@@ -34,9 +34,10 @@ class ThumbListWidget(QListWidget):
                         widget.setTextUp(index)
                         widget.setTextDown(name)
                         widget.setIcon(icon)
-                        item.setSizeHint(widget.sizeHint())
-                        self.setItemWidget(item, widget)
-                        self.playerAddedSignal.emit()
+                        if item:
+                            item.setSizeHint(widget.sizeHint())
+                            self.setItemWidget(item, widget)
+                            self.playerAddedSignal.emit()
     
 
 class MainWindow(QMainWindow):

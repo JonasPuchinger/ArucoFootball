@@ -141,10 +141,10 @@ class OpenGLGlyphs:
         # self.sphere = OBJ('sphere.obj')
 
         #add Players to list
-        self.players.append(Player("Maxi", "1", "maxi-img.jpeg", self.player1))
-        self.players.append(Player("Dani", "7", "dani-img.jpeg", self.player2))
-        self.players.append(Player("Jonas", "2", "jonas-img.jpeg", self.player3))
-        self.players.append(Player("Michi", "7", "michi-img.jpeg", self.player4))
+        self.players.append(Player("Maxi", "1", "maxi-img.jpg", self.player1))
+        self.players.append(Player("Dani", "2", "dani-img.jpg", self.player2))
+        self.players.append(Player("Jonas", "3", "jonas-img.jpg", self.player3))
+        self.players.append(Player("Michi", "4", "michi-img.jpg", self.player4))
         
         # assign texture
         glEnable(GL_TEXTURE_2D)
