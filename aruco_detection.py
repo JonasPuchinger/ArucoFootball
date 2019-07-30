@@ -1,7 +1,8 @@
 import cv2
-import numpy as np 
+import numpy as np
 import cv2.aruco as aruco
 import glob
+
 
 class Tracker:
     display_name = "Frame"
@@ -12,7 +13,7 @@ class Tracker:
         criteria = (cv2.TermCriteria_EPS + cv2.TermCriteria_MAX_ITER, 30, 0.001)
 
         objp = np.zeros((6 * 7, 3), np.float32)
-        objp[:,:2] = np.mgrid[0:7, 0:6].T.reshape(-1, 2)
+        objp[:, :2] = np.mgrid[0:7, 0:6].T.reshape(-1, 2)
 
         objpoints = []
         imgpoints = []
@@ -24,7 +25,7 @@ class Tracker:
 
             ret, corners = cv2.findChessboardCorners(gray, (7, 6), None)
 
-            if ret == True:
+            if ret is True:
                 objpoints.append(objp)
 
                 corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
@@ -39,7 +40,6 @@ class Tracker:
         params = aruco.DetectorParameters_create()
 
         return aruco.detectMarkers(gray_color, aruco_dict, parameters=params)
-
 
     @staticmethod
     def process_configuration(img, mtx, dist, rvec, tvec):
@@ -73,7 +73,7 @@ class Tracker:
                     ret, img = cap.read()
                     corners, ids, _ = Tracker.preprocess(img)
 
-                    if np.all(ids != None):
+                    if np.all(ids is not None):
                         rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, 1, mtx, dist)
 
                         for rvec, tvec in zip(rvecs, tvecs):
@@ -84,19 +84,3 @@ class Tracker:
                     is_running = Tracker.display(img)
             return wrapped_func
         return decorator
-
-class Input:
-    def __init__(self, address="B8:AE:6E:F1:39:81"):
-        self.address = address
-       
-    
-    @Tracker.track('calib_images/*.jpg')
-    def process(self):
-        return None
-
-if __name__ == "__main__":
-    Tracker.is_showing_marker_coodrinate_system = True
-
-    inp = Input()
-    inp.process()
-    pass
