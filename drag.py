@@ -49,14 +49,28 @@ class MainWindow(QMainWindow):
         self.initialCount = 0
         self.allItems = []
         self.listCount = 0
+        self.setStyleSheet("font: Times New Roman")
+        benchLabel = QLabel()
+        benchLabel.setText("Bench: ")
+        benchLabel.setStyleSheet("font: 30pt Times New Roman")
+        fieldLabel = QLabel()
+        fieldLabel.setText("Field: ")
+        fieldLabel.setStyleSheet("font: 30pt Times New Roman")
+        labelLayout = QHBoxLayout()
+        labelLayout.addWidget(fieldLabel)
+        labelLayout.addWidget(benchLabel)
+
+        listLayout = QHBoxLayout()
+
         myQWidget = QWidget()
-        myBoxLayout = QHBoxLayout()
+        myBoxLayout = QVBoxLayout()
+
         myQWidget.setLayout(myBoxLayout)
         self.setCentralWidget(myQWidget)
 
         self.listWidgetA = ThumbListWidget(self)
         self.listWidgetA.playerAddedSignal.connect(self.changedList)
-
+        self.listWidgetA.setStyleSheet("background-color: #E5A574")
         for player in player_data:
             player = (player.number, player.name, player.pic_path)
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
@@ -65,10 +79,13 @@ class MainWindow(QMainWindow):
             self.listWidgetA.addItem(myQListWidgetItem)
 
         self.listWidgetB = ThumbListWidget(self)
+        self.listWidgetB.setStyleSheet("background-color: #74E596")
         self.listWidgetB.playerAddedSignal.connect(self.changedList)
+        listLayout.addWidget(self.listWidgetB)
+        listLayout.addWidget(self.listWidgetA)
 
-        myBoxLayout.addWidget(self.listWidgetB)
-        myBoxLayout.addWidget(self.listWidgetA)
+        myBoxLayout.addLayout(labelLayout)
+        myBoxLayout.addLayout(listLayout)
 
         self.undo_count = -1
         self.undo_items = []
@@ -141,7 +158,6 @@ class MainWindow(QMainWindow):
                         data = item.data(Qt.UserRole)
                         saveWidget.append(data)
                 widgets += (saveWidget, )
-            print("Added..")
             self.undo_items.append(widgets)
         
 
@@ -164,7 +180,7 @@ class QCustomQWidget (QWidget):
             color: rgb(0, 0, 255);
         ''')
         self.textDownQLabel.setStyleSheet('''
-            color: rgb(255, 0, 0);
+            color: rgb(0, 0, 0);
         ''')
 
     def setTextUp (self, text):

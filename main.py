@@ -127,6 +127,7 @@ class OpenGLGlyphs:
 
         # assign shapes
         #self.player = OBJ('football-player.obj')
+
         self.player1 = OBJ('football-player-new.obj', 1)
         self.player2 = OBJ('football-player-new.obj', 2)
         #self.player3 = OBJ('football-player1.obj', 3)
@@ -140,6 +141,8 @@ class OpenGLGlyphs:
         #add Players to list
         self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
         self.players.append(Player("Cristiano Ronaldo", "7", "devil.jpg", self.player2))
+        self.players.append(Player("Marco Reuß", "2", "devil.jpg", self.player3))
+        self.players.append(Player("Zidan", "7", "devil.jpg", self.player4))
         
         # assign texture
         glEnable(GL_TEXTURE_2D)
@@ -153,7 +156,8 @@ class OpenGLGlyphs:
         self.unset_player_widget = self.mainWindow.listWidgetA
         self.unset_player_widget.itemChanged.connect(self.removeID)
         self.mainWindow.setFocus()
-        self.mainWindow.resize(800,800)
+        self.mainWindow.setWindowTitle("Tactic-Window")
+        self.mainWindow.resize(600,800)
         self.cursor = QCursor()
        
         thread = threading.Thread( target = self.gameModel ,args =())
@@ -281,9 +285,9 @@ class OpenGLGlyphs:
         # setup and run OpenGL
         glutInit()
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(1960, 1024)
+        glutInitWindowSize(1280, 960)
         glutInitWindowPosition(800, 400)
-        self.window_id = glutCreateWindow("OpenGL Glyphs")
+        self.window_id = glutCreateWindow("Footballfield")
         glutDisplayFunc(self._draw_scene)
         glutIdleFunc(self._draw_scene)
         self._init_gl(640, 480)
