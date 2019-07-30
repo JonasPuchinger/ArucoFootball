@@ -127,8 +127,8 @@ class OpenGLGlyphs:
 
         # assign shapes
         #self.player = OBJ('football-player.obj')
-        self.player1 = OBJ('football-player1.obj', 1)
-        self.player2 = OBJ('football-player1.obj', 2)
+        self.player1 = OBJ('football-player-new.obj', 1)
+        self.player2 = OBJ('football-player-new.obj', 2)
         #self.player3 = OBJ('football-player1.obj', 3)
         #self.player4 = OBJ('football-player1.obj', 4)
         #self.player5 = OBJ('football-player1.obj', 5)
