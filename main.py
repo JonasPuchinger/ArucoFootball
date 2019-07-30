@@ -93,8 +93,10 @@ class OpenGLGlyphs:
                 else:
                     pyautogui.mouseUp(button='right')
                     button_pressed = not button_pressed
-            if self.wm.buttons["B"]:
+            if self.wm.buttons["Left"]:
                 self.mainWindow.undoMethod(True)
+            if self.wm.buttons["Right"]:
+                self.mainWindow.undoMethod(False)
             state = self.wm.ir.get_state()
             if len(state) == 4:
 
@@ -130,8 +132,8 @@ class OpenGLGlyphs:
 
         self.player1 = OBJ('football-player-new.obj', 1)
         self.player2 = OBJ('football-player-new.obj', 2)
-        #self.player3 = OBJ('football-player1.obj', 3)
-        #self.player4 = OBJ('football-player1.obj', 4)
+        self.player3 = OBJ('football-player-new.obj', 3)
+        self.player4 = OBJ('football-player-new.obj', 4)
         #self.player5 = OBJ('football-player1.obj', 5)
         #self.player6 = OBJ('football-player1.obj', 6)
         #self.player7 = OBJ('football-player1.obj', 7)
@@ -139,10 +141,10 @@ class OpenGLGlyphs:
         # self.sphere = OBJ('sphere.obj')
 
         #add Players to list
-        self.players.append(Player("Oliver Kahn", "1", "devil.jpg", self.player1))
-        self.players.append(Player("Cristiano Ronaldo", "7", "devil.jpg", self.player2))
-        self.players.append(Player("Marco Reuß", "2", "devil.jpg", self.player3))
-        self.players.append(Player("Zidan", "7", "devil.jpg", self.player4))
+        self.players.append(Player("Maxi", "1", "maxi-img.jpeg", self.player1))
+        self.players.append(Player("Dani", "7", "dani-img.jpeg", self.player2))
+        self.players.append(Player("Jonas", "2", "jonas-img.jpeg", self.player3))
+        self.players.append(Player("Michi", "7", "michi-img.jpeg", self.player4))
         
         # assign texture
         glEnable(GL_TEXTURE_2D)
@@ -229,7 +231,11 @@ class OpenGLGlyphs:
         img = image
         corners, ids, _ = Tracker.preprocess(img)
         if np.all(ids != None):
-            rvec, tvec = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
+            params = aruco.estimatePoseSingleMarkers(corners, 1, self.mtx, self.dist)
+            if len(params) == 2:
+                rvec, tvec = params
+            else:
+                rvec, tvec, _ = params
         else:
             return
 
