@@ -25,16 +25,13 @@ class ArucoFootball:
                                [1.0, 1.0, 1.0, 1.0]])
 
     def __init__(self, btAddr):
+        # init needed values
         self.btAddr = btAddr
-        # initialise shapes
         self.player = None
-        # initialise texture
         self.texture_background = None
-        # init player lists
         self.set_ids = []
         self.set_players = []
         self.players = []
-        # init camera values
         self.calc_values()
         # initialise webcam and start thread
         self.webcam = Webcam()
@@ -105,7 +102,7 @@ class ArucoFootball:
         glEnable(GL_TEXTURE_2D)
         self.texture_background = glGenTextures(1)
 
-    # player removed from list, remove set id
+    # if player removed from list -> remove set id
     def removeID(self):
         for index in range(self.unset_player_widget.count()):
             item = self.unset_player_widget.item(index)
@@ -186,14 +183,12 @@ class ArucoFootball:
             rvecs, tvecs, glyph_name = rvec[i], tvec[i], ids[i][0]
             # build view matrix
             rmtx = cv2.Rodrigues(rvecs)[0]
-
             view_matrix = np.array([[rmtx[0][0], rmtx[0][1], rmtx[0][2], tvecs[0][0]],
                                     [rmtx[1][0], rmtx[1][1], rmtx[1][2], tvecs[0][1]],
                                     [rmtx[2][0], rmtx[2][1], rmtx[2][2], tvecs[0][2]],
                                     [0.0, 0.0, 0.0, 1.0]])
 
             view_matrix = view_matrix * self.INVERSE_MATRIX
-
             view_matrix = np.transpose(view_matrix)
 
             # load view matrix and draw shape
