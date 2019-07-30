@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
 
     def undoMethod(self, undo):        
         #self.allItems.append(self.undo_items)
-        self.undo_items = self.undo_items[:self.undo_count+1]
+        #self.undo_items = self.undo_items[:self.undo_count+1]
         if undo:
             if self.undo_count >= 1: 
                 self.undo_count -= 1
@@ -85,14 +85,11 @@ class MainWindow(QMainWindow):
                 #self.listCount += 1
                 
         else:
-            if len(self.allItems) > 0 :
-                print("Fired..")
-               #TODO redo
-               
-                #if self.undo_count < len(self.allItems[self.listCount]):
-                #    self.undo_count += 1
-                #    self.removeItems()
-                #    self.addItems(self.allItems[self.listCount][self.undo_count])
+           
+            if self.undo_count < len(self.undo_items)-1:
+                self.undo_count += 1
+                self.removeItems()
+                self.addItems(self.undo_items[self.undo_count])
 
             
     # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-undoframework.html
@@ -126,7 +123,7 @@ class MainWindow(QMainWindow):
                         myQListWidgetItem.setData(Qt.UserRole, item)
                         self.listWidgetB.addItem(myQListWidgetItem)
             count += 1
-        self.undo_count -= len(self.player_data)
+        self.initialCount -= len(self.player_data)
 
                         
     def changedList(self):
@@ -144,6 +141,7 @@ class MainWindow(QMainWindow):
                         data = item.data(Qt.UserRole)
                         saveWidget.append(data)
                 widgets += (saveWidget, )
+            print("Added..")
             self.undo_items.append(widgets)
         
 
