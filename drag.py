@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         self.initialCount = 0
         self.allItems = []
         self.listCount = 0
-
+        self.setStyleSheet("font: Times New Roman")
         benchLabel = QLabel()
         benchLabel.setText("Bench: ")
         benchLabel.setStyleSheet("font: 30pt Times New Roman")
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
 
         self.listWidgetA = ThumbListWidget(self)
         self.listWidgetA.playerAddedSignal.connect(self.changedList)
-
+        self.listWidgetA.setStyleSheet("background-color: #E5A574")
         for player in player_data:
             player = (player.number, player.name, player.pic_path)
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
             self.listWidgetA.addItem(myQListWidgetItem)
 
         self.listWidgetB = ThumbListWidget(self)
+        self.listWidgetB.setStyleSheet("background-color: #74E596")
         self.listWidgetB.playerAddedSignal.connect(self.changedList)
         listLayout.addWidget(self.listWidgetB)
         listLayout.addWidget(self.listWidgetA)
@@ -180,7 +181,7 @@ class QCustomQWidget (QWidget):
             color: rgb(0, 0, 255);
         ''')
         self.textDownQLabel.setStyleSheet('''
-            color: rgb(255, 0, 0);
+            color: rgb(0, 0, 0);
         ''')
 
     def setTextUp (self, text):
