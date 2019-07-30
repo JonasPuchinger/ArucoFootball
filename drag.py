@@ -49,8 +49,20 @@ class MainWindow(QMainWindow):
         self.initialCount = 0
         self.allItems = []
         self.listCount = 0
+
+        benchLabel = QLabel()
+        benchLabel.setText("Bench: ")
+        fieldLabel = QLabel()
+        fieldLabel.setText("Field: ")
+        labelLayout = QHBoxLayout()
+        labelLayout.addWidget(fieldLabel)
+        labelLayout.addWidget(benchLabel)
+
+        listLayout = QHBoxLayout()
+
         myQWidget = QWidget()
-        myBoxLayout = QHBoxLayout()
+        myBoxLayout = QVBoxLayout()
+
         myQWidget.setLayout(myBoxLayout)
         self.setCentralWidget(myQWidget)
 
@@ -66,9 +78,11 @@ class MainWindow(QMainWindow):
 
         self.listWidgetB = ThumbListWidget(self)
         self.listWidgetB.playerAddedSignal.connect(self.changedList)
+        listLayout.addWidget(self.listWidgetB)
+        listLayout.addWidget(self.listWidgetA)
 
-        myBoxLayout.addWidget(self.listWidgetB)
-        myBoxLayout.addWidget(self.listWidgetA)
+        myBoxLayout.addLayout(labelLayout)
+        myBoxLayout.addLayout(listLayout)
 
         self.undo_count = -1
         self.undo_items = []

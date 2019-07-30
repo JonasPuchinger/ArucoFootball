@@ -50,7 +50,7 @@ class OpenGLGlyphs:
         self.players = []
 
         # connect wiimote
-        self.connectingWiimote(btAddr)
+        #self.connectingWiimote(btAddr)
         self.transformation = pt()
         
     def connectingWiimote(self, btAddr):
@@ -156,8 +156,8 @@ class OpenGLGlyphs:
         self.mainWindow.resize(800,800)
         self.cursor = QCursor()
        
-        thread = threading.Thread( target = self.gameModel ,args =())
-        thread.start()
+        #thread = threading.Thread( target = self.gameModel ,args =())
+        #thread.start()
 
         app.exec_()
 
