@@ -3,10 +3,7 @@ import numpy as np
 import cv2.aruco as aruco
 import glob
 
-
 class Tracker:
-    display_name = "Frame"
-    is_showing_marker_coodrinate_system = False
 
     @staticmethod
     def calculate_camera_values(path):
@@ -40,47 +37,3 @@ class Tracker:
         params = aruco.DetectorParameters_create()
 
         return aruco.detectMarkers(gray_color, aruco_dict, parameters=params)
-
-    @staticmethod
-    def process_configuration(img, mtx, dist, rvec, tvec):
-        if Tracker.is_showing_marker_coodrinate_system:
-            aruco.drawAxis(img, mtx, dist, rvec, tvec, 1)
-
-    @staticmethod
-    def clean_up(cap):
-        cap.release()
-        cv2.destroyAllWindows()
-
-    @staticmethod
-    def display(img):
-        cv2.imshow(Tracker.display_name, img)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            return False
-
-        return True
-
-    @staticmethod
-    def track(path):
-        def decorator(func):
-            def wrapped_func(*args, **kwargs):
-                cap = cv2.VideoCapture(0)
-                ret, mtx, dist, rvecs, tvecs = Tracker.calculate_camera_values(path)
-
-                is_running = True
-
-                while(is_running):
-                    ret, img = cap.read()
-                    corners, ids, _ = Tracker.preprocess(img)
-
-                    if np.all(ids is not None):
-                        rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, 1, mtx, dist)
-
-                        for rvec, tvec in zip(rvecs, tvecs):
-                            axis = func(args[0])
-
-                            Tracker.process_configuration(img, mtx, dist, rvec, tvec)
-
-                    is_running = Tracker.display(img)
-            return wrapped_func
-        return decorator
