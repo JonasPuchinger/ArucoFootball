@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
         myBoxLayout.addLayout(labelLayout)
         myBoxLayout.addLayout(listLayout)
 
-        self.undo_count = -1
+        self.undo_count = 0
         self.undo_items = []
 
 
@@ -139,6 +139,7 @@ class MainWindow(QMainWindow):
 
         else:
             self.undo_count += 1
+            self.undo_items = self.undo_items[:self.undo_count]
             widgets = ()
             for listWidget in (self.listWidgetA, self.listWidgetB):
                 saveWidget = []
