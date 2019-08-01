@@ -226,5 +226,6 @@ class ArucoFootball:
         glVertex3f(-4.0,  3.0, 0.0)
         glEnd()
 
+
 if __name__ == "__main__":
     ArucoFootball = ArucoFootball(sys.argv[1])
