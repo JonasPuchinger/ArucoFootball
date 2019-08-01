@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# code from M.Sc. Hahn Juergen University of Regensburg
 
 from numpy import *
 from pylab import *

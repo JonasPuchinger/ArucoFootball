@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# code from: https://rdmilligan.wordpress.com/2015/10/15/augmented-reality-using-opencv-opengl-and-blender/
 import cv2
 from threading import Thread
 

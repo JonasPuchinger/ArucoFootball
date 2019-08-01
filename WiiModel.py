@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 import wiimote
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint, Qt

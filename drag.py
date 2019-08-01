@@ -1,4 +1,7 @@
-# code for drag-and-drop from https://stackoverflow.com/questions/41595014/dragndrop-custom-widget-items-between-qlistwidgets
+#!/usr/bin/env python3
+# coding: utf-8
+# code for drag-and-drop
+# from https://stackoverflow.com/questions/41595014/dragndrop-custom-widget-items-between-qlistwidgets
 # modified for this purpose and PyQt 5
 
 from PyQt5.QtGui import *
@@ -35,10 +38,14 @@ class ThumbListWidget(QListWidget):
                         widget.setTextUp(index)
                         widget.setTextDown(name)
                         widget.setIcon(icon)
+
                         if item:
-                            item.setSizeHint(widget.sizeHint())
-                            self.setItemWidget(item, widget)
-                            self.playerAddedSignal.emit()
+                            try:
+                                item.setSizeHint(widget.sizeHint())
+                                self.setItemWidget(item, widget)
+                                self.playerAddedSignal.emit()
+                            except Exception as e:
+                                print(e)
 
 
 class MainWindow(QMainWindow):
@@ -90,7 +97,6 @@ class MainWindow(QMainWindow):
         self.undo_count = 0
         self.undo_items = []
 
-
     def undoMethod(self, undo):
         if undo:
             if self.undo_count >= 1:
@@ -131,9 +137,11 @@ class MainWindow(QMainWindow):
                         myQListWidgetItem.setData(Qt.UserRole, item)
                         self.listWidgetB.addItem(myQListWidgetItem)
             count += 1
+        # stop adding not user related actions to undo-stack
         self.initialCount -= len(self.player_data)
 
     def changedList(self):
+        # do not add not user-related actions to undo-stack
         if self.initialCount < len(self.player_data)-1:
             self.initialCount += 1
 

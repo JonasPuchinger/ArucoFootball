@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# code for OpenGL model/position rendering
+# from: https://rdmilligan.wordpress.com/2015/10/15/augmented-reality-using-opencv-opengl-and-blender/
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -85,8 +90,8 @@ class ArucoFootball:
 
         # assign shapes
         self.player1 = OBJ('football-player-new.obj', 1)
-        # self.player2 = OBJ('football-player-new.obj', 2)
-        # self.player3 = OBJ('football-player-new.obj', 3)
+        self.player2 = OBJ('football-player-new.obj', 2)
+        self.player3 = OBJ('football-player-new.obj', 3)
         # self.player4 = OBJ('football-player-new.obj', 4)
         # self.player5 = OBJ('football-player1.obj', 5)
         # self.player6 = OBJ('football-player1.obj', 6)
@@ -94,8 +99,8 @@ class ArucoFootball:
 
         # add Players to list
         self.players.append(Player("Dani", "1", "dani-img.jpg", self.player1))
-        # self.players.append(Player("Maxi", "2", "maxi-img.jpg", self.player2))
-        # self.players.append(Player("Jonas", "3", "jonas-img.jpg", self.player3))
+        self.players.append(Player("Maxi", "2", "maxi-img.jpg", self.player2))
+        self.players.append(Player("Jonas", "3", "jonas-img.jpg", self.player3))
         # self.players.append(Player("Michi", "4", "michi-img.jpg", self.player4))
 
         # assign texture

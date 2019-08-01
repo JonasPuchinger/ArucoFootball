@@ -1,7 +1,12 @@
+#!/usr/bin/env python3
+# coding: utf-8
+# code from M.Sc. Hahn Juergen University of Regensburg
+
 import cv2
 import numpy as np
 import cv2.aruco as aruco
 import glob
+
 
 class Tracker:
 
