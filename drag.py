@@ -1,17 +1,21 @@
-# code from https://stackoverflow.com/questions/41595014/dragndrop-custom-widget-items-between-qlistwidgets
+#!/usr/bin/env python3
+# coding: utf-8
+# code for drag-and-drop
+# from https://stackoverflow.com/questions/41595014/dragndrop-custom-widget-items-between-qlistwidgets
 # modified for this purpose and PyQt 5
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import sys, os
+import sys
+import os
 import queue
 import threading
+
 
 class ThumbListWidget(QListWidget):
 
     playerAddedSignal = pyqtSignal()
-
 
     def __init__(self, type, parent=None):
         super(ThumbListWidget, self).__init__(parent)
@@ -26,23 +30,27 @@ class ThumbListWidget(QListWidget):
     def handleRowsInserted(self, parent, first, last):
         for index in range(first, last + 1):
             item = self.item(index)
-            if item: 
+            if item:
                 if self.itemWidget(item) is None:
-                    if item.data(Qt.UserRole): 
+                    if item.data(Qt.UserRole):
                         index, name, icon = item.data(Qt.UserRole)
                         widget = QCustomQWidget()
                         widget.setTextUp(index)
                         widget.setTextDown(name)
                         widget.setIcon(icon)
+
                         if item:
-                            item.setSizeHint(widget.sizeHint())
-                            self.setItemWidget(item, widget)
-                            self.playerAddedSignal.emit()
-    
+                            try:
+                                item.setSizeHint(widget.sizeHint())
+                                self.setItemWidget(item, widget)
+                                self.playerAddedSignal.emit()
+                            except Exception as e:
+                                print(e)
+
 
 class MainWindow(QMainWindow):
     def __init__(self, player_data):
-        super(QMainWindow,self).__init__()
+        super(QMainWindow, self).__init__()
         self.createActions()
         self.player_data = player_data
         self.listItems = {}
@@ -51,6 +59,7 @@ class MainWindow(QMainWindow):
         self.allItems = []
         self.listCount = 0
         self.setStyleSheet("font: Times New Roman")
+
         benchLabel = QLabel()
         benchLabel.setText("Bench: ")
         benchLabel.setStyleSheet("font: 30pt Times New Roman")
@@ -60,18 +69,19 @@ class MainWindow(QMainWindow):
         labelLayout = QHBoxLayout()
         labelLayout.addWidget(fieldLabel)
         labelLayout.addWidget(benchLabel)
-
         listLayout = QHBoxLayout()
-
         myQWidget = QWidget()
         myBoxLayout = QVBoxLayout()
-
         myQWidget.setLayout(myBoxLayout)
-        self.setCentralWidget(myQWidget)
 
+        self.setCentralWidget(myQWidget)
         self.listWidgetA = ThumbListWidget(self)
         self.listWidgetA.playerAddedSignal.connect(self.changedList)
         self.listWidgetA.setStyleSheet("background-color: #E5A574")
+        self.listWidgetB = ThumbListWidget(self)
+        self.listWidgetB.setStyleSheet("background-color: #74E596")
+        self.listWidgetB.playerAddedSignal.connect(self.changedList)
+
         for player in player_data:
             player = (player.number, player.name, player.pic_path)
             myQListWidgetItem = QListWidgetItem(self.listWidgetA)
@@ -79,51 +89,37 @@ class MainWindow(QMainWindow):
             myQListWidgetItem.setData(Qt.UserRole, player)
             self.listWidgetA.addItem(myQListWidgetItem)
 
-        self.listWidgetB = ThumbListWidget(self)
-        self.listWidgetB.setStyleSheet("background-color: #74E596")
-        self.listWidgetB.playerAddedSignal.connect(self.changedList)
         listLayout.addWidget(self.listWidgetB)
         listLayout.addWidget(self.listWidgetA)
-
         myBoxLayout.addLayout(labelLayout)
         myBoxLayout.addLayout(listLayout)
 
-        self.undo_count = -1
+        self.undo_count = 0
         self.undo_items = []
 
-
-    def undoMethod(self, undo):        
-        #self.allItems.append(self.undo_items)
-        #self.undo_items = self.undo_items[:self.undo_count+1]
+    def undoMethod(self, undo):
         if undo:
-            if self.undo_count >= 1: 
+            if self.undo_count >= 1:
                 self.undo_count -= 1
                 self.removeItems()
                 self.addItems(self.undo_items[self.undo_count])
-                #self.listCount += 1
-                
         else:
-           
+
             if self.undo_count < len(self.undo_items)-1:
                 self.undo_count += 1
                 self.removeItems()
                 self.addItems(self.undo_items[self.undo_count])
 
-            
     # https://doc.qt.io/archives/qtjambi-4.5.2_01/com/trolltech/qt/qtjambi-undoframework.html
     def createActions(self):
         self.undoAction = QShortcut(QKeySequence("Ctrl+Z"), self)
         self.undoAction.activated.connect(lambda: self.undoMethod(True))
-        
-
         self.redoAction = QShortcut(QKeySequence("Ctrl+Y"), self)
         self.redoAction.activated.connect(lambda: self.undoMethod(False))
-        
 
     def removeItems(self):
         for widgets in (self.listWidgetA, self.listWidgetB):
             widgets.clear()
-
 
     def addItems(self, widgetList):
         items = []
@@ -141,15 +137,17 @@ class MainWindow(QMainWindow):
                         myQListWidgetItem.setData(Qt.UserRole, item)
                         self.listWidgetB.addItem(myQListWidgetItem)
             count += 1
+        # stop adding not user related actions to undo-stack
         self.initialCount -= len(self.player_data)
 
-                        
     def changedList(self):
+        # do not add not user-related actions to undo-stack
         if self.initialCount < len(self.player_data)-1:
             self.initialCount += 1
 
         else:
             self.undo_count += 1
+            self.undo_items = self.undo_items[:self.undo_count]
             widgets = ()
             for listWidget in (self.listWidgetA, self.listWidgetB):
                 saveWidget = []
@@ -159,40 +157,37 @@ class MainWindow(QMainWindow):
                         data = item.data(Qt.UserRole)
                         saveWidget.append(data)
                 widgets += (saveWidget, )
+
             self.undo_items.append(widgets)
-        
+
 
 class QCustomQWidget (QWidget):
-    def __init__ (self, parent = None):
+    def __init__(self, parent=None):
         super(QCustomQWidget, self).__init__(parent)
         self.textQVBoxLayout = QVBoxLayout()
-        self.textUpQLabel    = QLabel()
-        self.textDownQLabel  = QLabel()
+        self.textUpQLabel = QLabel()
+        self.textDownQLabel = QLabel()
         self.textQVBoxLayout.addWidget(self.textUpQLabel)
         self.textQVBoxLayout.addWidget(self.textDownQLabel)
-        self.allQHBoxLayout  = QHBoxLayout()
-        self.iconQLabel      = QLabel()
+        self.allQHBoxLayout = QHBoxLayout()
+        self.iconQLabel = QLabel()
         self.allQHBoxLayout.addWidget(self.iconQLabel, 0)
         self.allQHBoxLayout.addLayout(self.textQVBoxLayout, 1)
-        
+
         self.setLayout(self.allQHBoxLayout)
         # setStyleSheet
-        self.textUpQLabel.setStyleSheet('''
-            color: rgb(0, 0, 255);
-        ''')
-        self.textDownQLabel.setStyleSheet('''
-            color: rgb(0, 0, 0);
-        ''')
+        self.textUpQLabel.setStyleSheet("color: rgb(0, 0, 255)")
+        self.textDownQLabel.setStyleSheet("color: rgb(0, 0, 0)")
 
-    def setTextUp (self, text):
+    def setTextUp(self, text):
         text = "Number: \n" + text
         self.textUpQLabel.setText(text)
 
-    def setTextDown (self, text):
-        text = "Name: \n" +text
+    def setTextDown(self, text):
+        text = "Name: \n" + text
         self.textDownQLabel.setText(text)
 
-    def setIcon (self, imagePath):
+    def setIcon(self, imagePath):
         pixmap = QPixmap(imagePath)
         pixmap = pixmap.scaledToHeight(80)
         self.iconQLabel.setPixmap(pixmap)
