@@ -83,7 +83,6 @@ class OBJ:
                 material = values[1]
             elif values[0] == 'mtllib':
                 if int(values[1]) == mtl_index:
-                    print(values[2])
                     self.mtl = MTL(values[2])
             elif values[0] == 'f':
                 face = []
