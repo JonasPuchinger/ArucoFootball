@@ -89,13 +89,11 @@ class ArucoFootball:
         glMatrixMode(GL_MODELVIEW)
 
         # assign shapes
-        self.player1 = OBJ('football-player-new.obj', 1)
-        self.player2 = OBJ('football-player-new.obj', 2)
-        self.player3 = OBJ('football-player-new.obj', 3)
-        # self.player4 = OBJ('football-player-new.obj', 4)
-        # self.player5 = OBJ('football-player1.obj', 5)
-        # self.player6 = OBJ('football-player1.obj', 6)
-        # self.player7 = OBJ('football-player1.obj', 7)
+        player_model = "models/football-player-new.obj"
+        self.player1 = OBJ(player_model, 1)
+        self.player2 = OBJ(player_model, 2)
+        self.player3 = OBJ(player_model, 3)
+        # self.player4 = OBJ(player_model, 4)
 
         # add Players to list
         self.players.append(Player("Dani", "1", "dani-img.jpg", self.player1))
