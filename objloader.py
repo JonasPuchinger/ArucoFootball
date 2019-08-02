@@ -6,13 +6,16 @@ from OpenGL.GL import *
 from os import path
 import importlib
 
+
 def MTL(filename):
     contents = {}
     mtl = None
     for line in open("models/"+filename, "r"):
-        if line.startswith('#'): continue
+        if line.startswith('#'):
+            continue
         values = line.split()
-        if not values: continue
+        if not values:
+            continue
         if values[0] == 'newmtl':
             mtl = contents[values[1]] = {}
         elif mtl is None:
@@ -32,14 +35,15 @@ def MTL(filename):
             texid = mtl['texture_Kd'] = glGenTextures(1)
             glBindTexture(GL_TEXTURE_2D, texid)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                GL_LINEAR)
+                            GL_LINEAR)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                GL_LINEAR)
+                            GL_LINEAR)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
-                GL_UNSIGNED_BYTE, image)
+                         GL_UNSIGNED_BYTE, image)
         else:
             mtl[values[0]] = list(map(float, values[1:]))
     return contents
+
 
 class OBJ:
     def __init__(self, filename, mtl_index, swapyz=False):
@@ -64,9 +68,11 @@ class OBJ:
 
         material = None
         for line in open(filename, "r"):
-            if line.startswith('#'): continue
+            if line.startswith('#'):
+                continue
             values = line.split()
-            if not values: continue
+            if not values:
+                continue
             if values[0] == 'v':
                 v = list(map(float, values[1:4]))
                 if swapyz:
@@ -103,7 +109,7 @@ class OBJ:
 
         self.gl_list = glGenLists(1)
         glNewList(self.gl_list, GL_COMPILE)
-        #glEnable(GL_TEXTURE_2D)
+        # glEnable(GL_TEXTURE_2D)
         glFrontFace(GL_CCW)
         for face in self.faces:
             vertices, normals, texture_coords, material = face
@@ -126,5 +132,5 @@ class OBJ:
                     glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
                 glVertex3fv(self.vertices[vertices[i] - 1])
             glEnd()
-        #glDisable(GL_TEXTURE_2D)
+        # glDisable(GL_TEXTURE_2D)
         glEndList()
