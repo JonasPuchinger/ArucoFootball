@@ -1,3 +1,6 @@
+# code from: https://www.pygame.org/wiki/OBJFileLoader
+# modified to fit our models
+
 import pygame
 from OpenGL.GL import *
 from os import path
