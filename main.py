@@ -96,10 +96,10 @@ class ArucoFootball:
         # self.player4 = OBJ(player_model, 4)
 
         # add Players to list
-        self.players.append(Player("Dani", "1", "dani-img.jpg", self.player1))
-        self.players.append(Player("Maxi", "2", "maxi-img.jpg", self.player2))
-        self.players.append(Player("Jonas", "3", "jonas-img.jpg", self.player3))
-        # self.players.append(Player("Michi", "4", "michi-img.jpg", self.player4))
+        self.players.append(Player("Dani", "1", "player_images/dani-img.jpg", self.player1))
+        self.players.append(Player("Maxi", "2", "player_images/maxi-img.jpg", self.player2))
+        self.players.append(Player("Jonas", "3", "player_images/jonas-img.jpg", self.player3))
+        # self.players.append(Player("Michi", "4", "player_images/michi-img.jpg", self.player4))
 
         # assign texture
         glEnable(GL_TEXTURE_2D)
